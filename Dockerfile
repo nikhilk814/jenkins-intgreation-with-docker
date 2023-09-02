@@ -1,4 +1,4 @@
-FROM node:12.2.0-alpine
+FROM node: 3.5.2
 WORKDIR usr/src/app
 COPY . .
 RUN npm install
