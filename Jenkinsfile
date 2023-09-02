@@ -1,45 +1,41 @@
 pipeline {
-    agent { label 'Dev-Agent node' }
-    
-    stages{
-        stage('Checkout'){
-            steps{
-                git url: 'https://github.com/Basanagoudapatil02/Project-on-Building-and-Deploying-a-Node.js-Application-with-Docker-on-Ubuntu.git', branch: 'master'
-            }
-        }
-        stage('Build'){
-            steps{
-                sh 'sudo docker build . -t basanagoudapatil/nodo-todo-app-test:latest'
-            }
-        }
-        stage('Test image') {
-            steps {
-                echo 'testing...'
-                sh 'sudo docker inspect --type=image basanagoudapatil/nodo-todo-app-test:latest '
-            }
-        }
-        
-        stage('Push'){
-            steps{
-        	     sh "sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc"
-                 sh 'sudo docker push basanagoudapatil/nodo-todo-app-test:latest'
-            }
-        }  
-        stage('Deploy'){
-            steps{
-                echo 'deploying on another server'
-                sh 'sudo docker stop nodetodoapp || true'
-                sh 'sudo docker rm nodetodoapp || true'
-                sh 'sudo docker run -d --name nodetodoapp basanagoudapatil/nodo-todo-app-test:latest'
-                sh '''
-                ssh -i Ubuntudemo.pem -o StrictHostKeyChecking=no ubuntu@44.211.144.201 <<EOF
-                sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc
-                sudo docker pull basanagoudapatil/nodo-todo-app-test:latest
-                sudo docker stop nodetodoapp || true
-                sudo docker rm nodetodoapp || true 
-                sudo docker run -d --name nodetodoapp basanagoudapatil/nodo-todo-app-test:latest
-                '''
-            }
-        }
+  environment {
+    imagename = "nikhilk814/todoapp:v1"
+    registryCredential = 'nikhilk814-dockerhub'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/nikhilk814/jenkins-intgreation-with-docker.git', branch: 'master', credentialsId: 'github-token'])
+
+      }
     }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    stage('Deploy') {
+      steps{
+        sh 'sudo docker run -d - name todoapp -p 8000:8000 nikhilk814/todoapp:v1'
+         
+
+      }
+    }
+  }
 }
