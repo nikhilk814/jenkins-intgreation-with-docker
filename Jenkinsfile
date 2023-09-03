@@ -1,7 +1,7 @@
 pipeline {
   environment {
     imagename = "nikhilk814/todoapp:v1"
-    
+    registryCredential= 'dockerhub'
     dockerImage = ''
   }
   agent any
@@ -16,7 +16,7 @@ pipeline {
       steps{
         script {
           dockerImage = docker.build imagename
-          withDockerRegistry(credentialsId: 'nikhilk814-dockerhub', toolName: 'docker', url: 'https://hub.docker.com/u/nikhilk814') {
+          withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker', url: 'https://hub.docker.com/u/nikhilk814') {
     // some block
           }
         }
