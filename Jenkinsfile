@@ -16,9 +16,7 @@ pipeline {
       steps{
         script {
           dockerImage = docker.build imagename
-          withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker', url: 'https://hub.docker.com/u/nikhilk814') {
-    // some block
-          }
+        
         }
       }
     }
