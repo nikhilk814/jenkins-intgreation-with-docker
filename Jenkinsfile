@@ -31,7 +31,7 @@ pipeline {
         }
       }
     }
-    stage('Deploy') {
+    stage('Release') {
       steps{
         sh 'docker run -d --name notodoapp -p 8000:8000 nikhilk814/todoapp:v1'
          
