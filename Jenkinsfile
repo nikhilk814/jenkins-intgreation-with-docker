@@ -33,7 +33,7 @@ pipeline {
     }
     stage('Deploy') {
       steps{
-        sh 'docker run -d - name todoapp -p 8000:8000 nikhilk814/todoapp:v1'
+        sh 'docker run -d --name notodoapp -p 8000:8000 nikhilk814/todoapp:v1'
          
 
       }
