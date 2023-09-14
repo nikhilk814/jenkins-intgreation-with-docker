@@ -19,8 +19,7 @@ Step 2 : Clone the code from Github
 The code for the project is cloned from GitHub using the command 'git clone <repository_url>'. In this case, the repository URL is
 https://github.com/nikhilk814/jenkins-intgreation-with-docker.git
  
- ![image](https://user-images.githubusercontent.com/63364609/233578384-4fa7f2b1-4d12-4b5d-af3c-7f82942279a2.png)
-
+ ![image]https://app.gemoo.com/share/image-annotation/560893767773147136?codeId=M03j9O6JKdZEq&origin=imageurlgenerator
 
 Step 3: Check the files and understand the requirements
 Check the files and understand the requirements Once the code has been cloned, we navigate to the directory using the command 'cd react_django_demo1_app' and use the 'ls' command to list the files in the directory. This helps us to understand the requirements of the project.
