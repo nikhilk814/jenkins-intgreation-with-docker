@@ -17,11 +17,10 @@ Command-
  
 Step 2 : Clone the code from Github
 The code for the project is cloned from GitHub using the command 'git clone <repository_url>'. In this case, the repository URL is
-https://github.com/LondheShubham153/node-todo-cicd.git
+https://github.com/nikhilk814/jenkins-intgreation-with-docker.git
  
  ![image](https://user-images.githubusercontent.com/63364609/233578384-4fa7f2b1-4d12-4b5d-af3c-7f82942279a2.png)
 
-(Here I’m cloning the code from Shubham londhe’s account and even you can forks that Repositorie to your github account).
 
 Step 3: Check the files and understand the requirements
 Check the files and understand the requirements Once the code has been cloned, we navigate to the directory using the command 'cd react_django_demo1_app' and use the 'ls' command to list the files in the directory. This helps us to understand the requirements of the project.
@@ -94,7 +93,7 @@ Check if the application is running Finally, we can check if the application is 
 The project aims to set up a Jenkins cluster consisting of a master node, an agent node, and a live server using three AWS EC2 instances. The project requires installing Java, Jenkins, and Docker on the master and agent nodes. The Jenkins cluster distributes the workload across multiple nodes, and the master node controls and assigns jobs to agent nodes. A pipeline is created to deploy a Node.js application using Docker. The pipeline has stages such as checkout, build, test, push, and deploy, which perform different tasks such as fetching source code from GitHub, building a Docker image, testing the image, pushing it to DockerHub, and deploying it to the live server. The project helps in automating the deployment process and saves time and effort by eliminating manual tasks.
 
 Pre-Requisites:
-1.	3 EC2 Instance (1 for Jenkins Master-Node, 1 for Jenkins Agent-Node and 1 for Deploying live sever)
+1.	3 EC2 Instance (1 for Jenkins Master-Node, 1 for Jenkins Agent-Node, and 1 for Deploying live server)
 2.	Jenkins and Java Installation in Master-Node
 3.	Only Java Installation in Agent-Node
 4.	Docker Installation
@@ -124,7 +123,7 @@ Step 2: Create a Node-todo-app-deployment  Job with Pipeline
 •	Select GitHub project and past GitHub project link
 •	Here, I used my GitHub project link 
 
-https://github.com/Basanagoudapatil02/Project-on-Building-and-Deploying-a-Node.js-Application-with-Docker-on-Ubuntu.git
+https://github.com/nikhilk814/jenkins-intgreation-with-docker.git
 
 ![image](https://github.com/Basanagoudapatil02/Project-on-Building-and-Deploying-a-Node.js-Application-with-Docker-on-Ubuntu/assets/63364609/13fff889-c744-4904-8030-42f4392a6722)
 
@@ -155,17 +154,17 @@ pipeline {
     	stages{
         	stage('Checkout'){
             	steps{
-git url: 'https://github.com/Basanagoudapatil02/Project-on-Building-and-Deploying-a-Node.js-Application-with-Docker-on-Ubuntu.git', branch: 'master' 
+git url: 'https://github.com/nikhilk814/jenkins-intgreation-with-docker.git', branch: 'master' 
             	}
         }
 2.	Build Stage 
 In a Jenkins pipeline, the "Build" stage is typically the first stage in the pipeline, and it is responsible for building the source code.
 The "Build" stage can include any necessary steps to compile the code, package it into a deployable format, and perform any other necessary preparation tasks.
-Here in this stage, I am building a docker image using docker file through command and tagging image with basanagoudapatil/nodo-todo-app-test:latest'
+Here in this stage, I am building a docker image using docker file through command and tagging image with nikhilk814/nodo-todo-app-test:latest'
 Note: Install docker and docker compose in Jenkins Master-Node.
         stage('Build’){
             steps{
-                sh 'docker build . -t basanagoudapatil/nodo-todo-app-test:latest'
+                sh 'docker build . -t nikhilk814/nodo-todo-app-test:latest'
             }
         }
 
@@ -173,19 +172,19 @@ Note: Install docker and docker compose in Jenkins Master-Node.
 In a Jenkins pipeline, the "Test" stage is typically the second stage in the pipeline, and it is responsible for running tests to verify the correctness of the built code.
 The "Test" stage can include any necessary steps to execute the tests and generate test reports.
 Here in this stage, I am testing docker image by executing command 
-docker inspect --type=image basanagoudapatil/nodo-todo-app-test:latest
+docker inspect --type=image nikhilk814/nodo-todo-app-test:latest
         stage('Test image') {
             steps {
                 echo 'testing...'
-                sh 'docker inspect --type=image basanagoudapatil/nodo-todo-app-test:latest '
+                sh 'docker inspect --type=image nikhilk814/nodo-todo-app-test:latest '
             }
         }
 4.	Push Stage
 In this stage, I am pushing docker image to my Dockerhub public repository and for dockerHub password I have generated separated dockerhub token. 
            stage('Push'){
      steps{
-        	     sh "sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc"
-                   sh 'sudo docker push basanagoudapatil/nodo-todo-app-test:latest'
+        	     sh "sudo docker login -u nikhilk814 -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc"
+                   sh 'sudo docker push nikhilk814/nodo-todo-app-test:latest'
             }
     }  
 5.	Deploy Stage
@@ -197,14 +196,14 @@ Here in this stage, I am building docker compose and deploying to another server
                 echo 'deploying on another server'
                 sh 'sudo docker stop nodetodoapp || true'
                 sh 'sudo docker rm nodetodoapp || true'
-                sh 'sudo docker run -d --name nodetodoapp -p 8000:8000 basanagoudapatil/nodo-todo-app-test:latest'
+                sh 'sudo docker run -d --name nodetodoapp -p 8000:8000 nikhilk814/nodo-todo-app-test:latest'
                 sh '''
                 ssh -i Ubuntudemo.pem -o StrictHostKeyChecking=no ubuntu@44.211.144.201 <<EOF
-                sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc
-                sudo docker pull basanagoudapatil/nodo-todo-app-test:latest
+                sudo docker login -u nikhilk814 -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc
+                sudo docker pull nikhilk814/nodo-todo-app-test:latest
                 sudo docker stop nodetodoapp || true
                 sudo docker rm nodetodoapp || true 
-                sudo docker run -d --name nodetodoapp -p 8000:8000 basanagoudapatil/nodo-todo-app-test:latest
+                sudo docker run -d --name nodetodoapp -p 8000:8000 nikhilk814/nodo-todo-app-test:latest
                 '''
             }
         }
@@ -216,25 +215,25 @@ pipeline {
     stages{
         stage('Checkout'){
             steps{
-                git url: 'https://github.com/Basanagoudapatil02/Project-on-Building-and-Deploying-a-Node.js-Application-with-Docker-on-Ubuntu.git', branch: 'master'
+                git url: 'https://github.com/nikhilk814/jenkins-intgreation-with-docker.git', branch: 'master'
             }
         }
         stage('Build'){
             steps{
-                sh 'sudo docker build . -t basanagoudapatil/nodo-todo-app-test:latest'
+                sh 'sudo docker build . -t nikhilk814/nodo-todo-app-test:latest'
             }
         }
         stage('Test image') {
             steps {
                 echo 'testing...'
-                sh 'sudo docker inspect --type=image basanagoudapatil/nodo-todo-app-test:latest '
+                sh 'sudo docker inspect --type=image nikhilk814/nodo-todo-app-test:latest '
             }
         }
         
         stage('Push'){
             steps{
-        	     sh "sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc"
-                 sh 'sudo docker push basanagoudapatil/nodo-todo-app-test:latest'
+        	     sh "sudo docker login -u nikhilk814 -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc"
+                 sh 'sudo docker push nikhilk814/nodo-todo-app-test:latest'
             }
         }  
         stage('Deploy'){
@@ -242,14 +241,14 @@ pipeline {
                 echo 'deploying on another server'
                 sh 'sudo docker stop nodetodoapp || true'
                 sh 'sudo docker rm nodetodoapp || true'
-                sh 'sudo docker run -d --name nodetodoapp -p 80:80  basanagoudapatil/nodo-todo-app-test:latest'
+                sh 'sudo docker run -d --name nodetodoapp -p 80:80  nikhilk814/nodo-todo-app-test:latest'
                 sh '''
                 ssh -i Ubuntudemo.pem -o StrictHostKeyChecking=no ubuntu@44.211.144.201 <<EOF
-                sudo docker login -u basanagoudapatil -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc
-                sudo docker pull basanagoudapatil/nodo-todo-app-test:latest
+                sudo docker login -u nikhilk814 -p dckr_pat_OvN0lH_USJztUCkm0opyjz-yXNc
+                sudo docker pull nikhilk814/nodo-todo-app-test:latest
                 sudo docker stop nodetodoapp || true
                 sudo docker rm nodetodoapp || true 
-                sudo docker run -d --name nodetodoapp -p 8000:8000 basanagoudapatil/nodo-todo-app-test:latest
+                sudo docker run -d --name nodetodoapp -p 8000:8000 nikhilk814/nodo-todo-app-test:latest
                 '''
             }
         }
